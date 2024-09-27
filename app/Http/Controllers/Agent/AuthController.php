@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Validator;
 use App\Models\Agent;
+use App\Models\Refferal as Ref;
 use App\Models\Otp;
 use Hash;
 use Throwable;
@@ -124,5 +125,71 @@ class AuthController extends Controller
 
         return redirect()->route('agent.dashboard')
             ->with('success', 'Success');
+    }
+
+    public function getRegister()
+    {
+        return Inertia::render('Agents/Auth/Register');
+    }
+
+    public function handleRegister(Request $request)
+    {
+        $preData = [
+            'phone' => $request->phone,
+            'password' => $request->password,
+            'refer_code' => 'AGNT-'.$request->refer_code,
+        ];
+
+        $rules = [
+            'phone' => 'required|min:10|max:10|unique:agents,phone',
+            'password' => 'required|min:6',
+
+        ];
+        if($request->has('refer_code') && $request->refer_code !== null){
+            $rules['refer_code'] = 'exists:agents,agent_code';
+        }
+
+        $validate = Validator::make($preData, $rules);
+
+        if($validate->fails()){
+            return back()->withErrors($validate)->withInput();
+        }
+
+        try{
+            $agent = Agent::create([
+                'phone' => $request->phone,
+                'password' => Hash::make($request->password),
+            ]);
+
+            if($request->refer_code && $request->refer_code !== null){
+                Ref::create([
+                    'refered_by' => Agent::where('agent_code', $preData['refer_code'])->first()->id,
+                    'refered_to' => $agent->id,
+                ]);
+            }
+
+            Otp::where('phone', $request->phone)->delete();
+            Otp::create([
+                'phone' => $request->phone,
+                'otp' => '111111',
+                // 'otp' => rand(100000, 999999)
+            ]);
+
+            return redirect()->route('get_otp_page', ['phone' => $request->phone]);
+
+        }   
+        catch(Throwable $th)
+        {
+            Log::error('@handleRegister' . $th->getMessage() . ' on line ' . $th->getLine());
+            return back()->with('error', 'Something went wrong!');
+        }
+        
+    }
+
+
+    public function logout()
+    {
+        Auth::guard('agent')->logout();
+        return redirect()->route('agent.login')->with('success', 'Logged out successfully');
     }
 }

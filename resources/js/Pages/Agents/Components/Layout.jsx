@@ -29,7 +29,7 @@ const Layout = ({ children }) => {
             </div>
             <nav className="bg-gray-800 border-t border-gray-700 fixed bottom-0 left-0 right-0">
                 <div className="flex justify-around p-2">
-                    <a href="/home" className="flex flex-col items-center text-gray-300 hover:text-white">
+                    <a href={route('agent.dashboard')} className="flex flex-col items-center text-gray-300 hover:text-white">
                         <FaHome className="text-xl" />
                         <span className="text-sm">Dashboard</span>
                     </a>

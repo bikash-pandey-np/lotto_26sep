@@ -15,7 +15,7 @@ use App\Models\AgentDepositLog;
 
 class DepositController extends Controller
 {
-    public function getDepositPage() 
+    public function getDepositPage(Request $request) 
     {
         $agent = Agent::find(Auth::guard('agent')->user()->id);
         
@@ -26,26 +26,45 @@ class DepositController extends Controller
 
         if($agent->is_masteragent)
         {
-            return Inertia::render('Agents/Deposit/Transfer');
+            return Inertia::render('Agents/Deposit/Transfer', [
+                'balance' => $agent->balance
+            ]);
         }
         else{
             $logs = AgentDepositLog::where('transfered_to', Auth::guard('agent')->user()->id)
                 ->with('transferedFrom')
-                ->orderBy('id', 'desc')->get();
+                ->orderBy('id', 'desc');
+
+       
+        
+            if($request->has('date') && $request->date !== null)
+            {
+                $logs->whereDate('created_at', $request->date);
+            }
+        
             return Inertia::render('Agents/Deposit/Index', [
-                'logs' => $logs
+                'logs' => $logs->get()
             ]);
         }
     }
 
-    public function depositHistory()
+    public function depositHistory(Request $request)
     {
+
         $logs = AgentDepositLog::where('transfered_from', Auth::guard('agent')->user()->id)
-        ->with('transferedTo')
-        ->orderBy('id', 'desc')->get();
+            ->with('transferedTo')
+            ->orderBy('id', 'desc');
+
+      
+
+        if($request->has('date') && $request->date !== null)
+        {
+            $logs->whereDate('created_at', $request->date);
+        }
+
 
         return Inertia::render('Agents/Deposit/HistoryForMaster', [
-            'logs' => $logs    
+            'logs' => $logs->get(),
         ]);
         
     }
@@ -77,6 +96,12 @@ class DepositController extends Controller
              return back()->withErrors($validate)->withInput();
          }
 
+         
+        //cannot send to self
+        if($agent->agent_code === $requestData['agent_code'])
+        {
+            return back()->with('error', 'Cannot send to self');
+        }
          DB::beginTransaction();
 
          try{

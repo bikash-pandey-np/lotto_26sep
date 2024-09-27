@@ -1,6 +1,7 @@
 import Layout from "./Components/Layout";
 
-const Dashboard = ()=> {
+const Dashboard = ({accountInfo})=> {
+    console.log('********AccountINFO***********',accountInfo);
     return(
         <Layout>
             <h1>Dashboard</h1>

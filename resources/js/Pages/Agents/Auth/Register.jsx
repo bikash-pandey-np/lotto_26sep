@@ -11,14 +11,13 @@ const Register = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log(data)
+        post(route('agent.register'));
+        
     };
    
     return (
         <div className="max-w-md mx-auto bg-white p-8 rounded-lg shadow-md">
-            <div className="flex justify-center mb-4 mt-8">
-                <img src={logo} alt="Logo" className="h-8" />
-            </div>
+            
             <h2 className="text-2xl font-bold text-center mb-6">Register an Account</h2>
             <form onSubmit={handleSubmit}>
                 <div className="mb-4">
@@ -57,7 +56,7 @@ const Register = () => {
                 <div className="flex items-center justify-between">
                     <button
                         type="submit"
-                        disabled={processing || !agree}
+                        disabled={processing}
                         className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-600"
                     >
                         Register

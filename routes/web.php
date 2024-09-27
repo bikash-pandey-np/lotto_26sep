@@ -23,22 +23,35 @@ Route::get('/login', [AuthController::class, 'getLogin'])
     ->name('agent.login');
 Route::post('/login', [AuthController::class, 'handleLogin']);
 
+Route::get('/register', [AuthController::class, 'getRegister'])
+    ->name('agent.register');
+Route::post('/register', [AuthController::class, 'handleRegister']);
 
-Route::get('/dashboard', [DashboardController::class, 'getDashboard'])
-    ->name('agent.dashboard');
+Route::middleware('agent')->group(function () { 
+    Route::get('/dashboard', [DashboardController::class, 'getDashboard'])
+        ->name('agent.dashboard');
 
-Route::get('/deposit', [DepositController::class, 'getDepositPage'])
-    ->name('agent.deposit');
-Route::get('/transfer-history', [DepositController::class, 'depositHistory'])
+
+    Route::post('/logout', [AuthController::class, 'logout'])
+        ->name('agent.logout');
+
+    Route::get('/deposit', [DepositController::class, 'getDepositPage'])
+        ->name('agent.deposit');
+    Route::get('/transfer-history', [DepositController::class, 'depositHistory'])
     ->name('agent.deposit_history');
-Route::post('/transfer-fund', [DepositController::class, 'transferFund'])
-    ->name('agent.transfer_funds');
+    Route::post('/transfer-fund', [DepositController::class, 'transferFund'])
+        ->name('agent.transfer_funds');
 
-Route::get('/more', function () {
-    return Inertia::render('Agents/More/Index');
-})->name('agent.more');
+    Route::get('/more', function () {
+        return Inertia::render('Agents/More/Index');
+    })->name('agent.more');
 
-Route::get('/events', [MoreController::class, 'getEventPage'])
-    ->name('agent_more_event');
-Route::get('/tickets', [MoreController::class, 'getTicketPage'])
+    Route::get('/events', [MoreController::class, 'getEventPage'])
+        ->name('agent_more_event');
+    Route::get('/tickets', [MoreController::class, 'getTicketPage'])
     ->name('agent_more_ticket');
+
+    Route::get('/issue-ticket', [MoreController::class, 'getIssueTicketPage'])
+        ->name('agent_more_issue_ticket');
+    Route::post('/issue-ticket', [MoreController::class, 'issueTicket']);
+});
