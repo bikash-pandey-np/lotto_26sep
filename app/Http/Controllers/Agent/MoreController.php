@@ -38,33 +38,33 @@ class MoreController extends Controller
         if ($request->has('searchTerm') && $request->searchTerm !== null) {
             $filterMode = true;
             $query->where('ticket_no', 'like', '%' . $request->searchTerm . '%')
-                ->where('fullname', 'like', '%' . $request->searchTerm . '%')
-                ->where('phone_no', 'like', '%' . $request->searchTerm . '%');
+                ->orWhere('fullname', 'like', '%' . $request->searchTerm . '%')
+                ->orWhere('phone_no', 'like', '%' . $request->searchTerm . '%');
         }
 
         if ($request->has('dateFilter') && $request->dateFilter !== null) {
             $filterMode = true;
-            $query->whereDate('created_at', $request->dateFilter);
+            $query->WhereDate('created_at', $request->dateFilter);
         }
 
         if ($request->has('statusFilter') && $request->statusFilter !== null) {
             $filterMode = true;
 
             if($request->statusFilter === 'active'){    
-                $query->where('has_expired', false);
+                $query->Where('has_expired', false);
             }else{
-                $query->where('has_expired', true);
+                $query->Where('has_expired', true);
             }
         }
 
         if ($request->has('eventFilter') && $request->eventFilter !== null) {
             $filterMode = true;
-            $query->where('event_id', $request->eventFilter);
+            $query->Where('event_id', $request->eventFilter);
         }
 
 
         return Inertia::render('Agents/More/Ticket', [
-            'tickets' => $query->get(),
+            'tickets' => $query->orderBy('created_at', 'desc')->get(),
             'events' => LEvent::where('is_completed', false)->get(),
             'filterMode' => $filterMode
         ]);
@@ -178,9 +178,21 @@ class MoreController extends Controller
             return back()->with('error', 'Failed to issue ticket');
         }
 
-        
+    }
 
+    public function getEarningLogs(Request $request)
+    {
+        $query = EarningLog::where('agent_id', Auth::guard('agent')->user()->id)
+            ->orderBy('created_at', 'desc');
 
+        if($request->has('date') && ($request->date !== null))
+        {
+            $query->whereDate('created_at', $request->date);
+        }
+
+        return Inertia::render('Agents/More/EarningLog', [
+            'logs' => $query->get(),
+        ]);
     }
 
 

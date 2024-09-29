@@ -27,28 +27,32 @@ const Index = () => {
     
     return (
         <Layout>
-            <div className="mt-4 p-4 mb-12">
-                <h1 className="text-2xl font-bold">More Options</h1>
+            <div className="mt-4 p-4 mb-12 shadow rounded-lg">
+                <h1 className="text-2xl font-bold text-white">More Options</h1>
 
-            <div className="mt-6">
-                <ul className="mt-4 space-y-2">
-                    <li>
-                        <a href={route('agent_more_event')} className="text-blue-600 hover:underline">Events</a>
-                    </li>
-                    <hr />
-                    <li>
-                        <a href="" className="text-blue-600 hover:underline">Earning Logs</a>
-                    </li>
-                    <li>
-                        <a href={route('agent_more_ticket')} className="text-blue-600 hover:underline">Tickets</a>
-                    </li>
-                    <li>
-                        <a 
-                        onClick={handleLogout}
-                        className="text-blue-600 hover:underline">Logout</a>
-                    </li>
-                </ul>
-            </div>
+                <div className="mt-6">
+                    <ul className="mt-4 space-y-2">
+                        <li className="flex items-center justify-between p-2 hover:bg-gray-100 rounded">
+                            <a href={route('agent_more_event')} className="text-blue-600 hover:text-blue-700">Events</a>
+                        </li>
+                        <hr className="my-2 border-t border-gray-200" />
+                        <li className="flex items-center justify-between p-2 hover:bg-gray-100 rounded">
+                            <a href={ route('agent_more_earning_logs') } className="text-blue-600 hover:text-blue-700">Earning Logs</a>
+                        </li>
+                        <hr className="my-2 border-t border-gray-200" />
+
+                        <li className="flex items-center justify-between p-2 hover:bg-gray-100 rounded">
+                            <a href={route('agent_more_ticket')} className="text-blue-600 hover:text-blue-700">Tickets</a>
+                        </li>
+                        <hr className="my-2 border-t border-gray-200" />
+
+                        <li className="flex items-center justify-between p-2 hover:bg-gray-100 rounded">
+                            <a 
+                            onClick={handleLogout}
+                            className="text-blue-600 hover:text-blue-700">Logout</a>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </Layout>
     );

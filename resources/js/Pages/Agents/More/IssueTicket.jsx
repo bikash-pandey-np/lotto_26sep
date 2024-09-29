@@ -21,7 +21,6 @@ const IssueTicket = ({balance, states, districts, local_bodies, events}) => {
         number6: '10',
     });
 
-    console.log(states);
 
     const handleSubmit = (e) => {
         e.preventDefault();

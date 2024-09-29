@@ -54,4 +54,7 @@ Route::middleware('agent')->group(function () {
     Route::get('/issue-ticket', [MoreController::class, 'getIssueTicketPage'])
         ->name('agent_more_issue_ticket');
     Route::post('/issue-ticket', [MoreController::class, 'issueTicket']);
+
+    Route::get('/earning-logs', [MoreController::class, 'getEarningLogs'])
+        ->name('agent_more_earning_logs');
 });
